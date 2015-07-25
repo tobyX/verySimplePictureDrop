@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="">
+		<meta name="author" content="Tobias Friebel">
+		<meta name="robots" content="noindex, nofollow">
+
+		<title>Alexandra &amp; Franz, eine Hochzeit in Bildern</title>
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="container">
+			<div class="header clearfix">
+				<h3 class="text-muted">Alexandra &amp; Franz, eine Hochzeit in Bildern</h3>
+			</div>
+
+			<div class="jumbotron" id="upload">
+				<h1>Bilder hochladen</h1>
+
+				<p class="lead">Der Upload funktioniert nur, wenn ein Name eingetragen wurde! Bilder einfach per Drag&amp;Drop irgendwo auf der Seite fallen lassen
+				oder den "Dateien auswählen"-Button für eine klassische Auswahl verwenden. Die Bilder werden erst nach dem Klick auf "Jetzt hochladen" wirklich hochgeladen.</p>
+
+				<div class="form-group">
+					<label for="name">Dein Name</label>
+					<input type="text" class="form-control" id="name" placeholder="Name">
+				</div>
+
+				<button type="button" class="btn btn-primary" id="fileinput-button">Dateien auswählen</button>
+				<button type="button" class="btn btn-success" id="uploadnow" disabled="disabled">Jetzt hochladen</button>
+
+			</div>
+
+			<div class="alert alert-success" role="alert" id="uploadfinished" style="display: none">Upload durchgeführt!</div>
+
+			<div class="files" id="previews">
+				<div id="template">
+					<div class="row">
+						<div class="col-xs-2">
+								<span class="preview"><img data-dz-thumbnail /></span>
+						</div>
+						<div class="col-xs-3">
+								<p class="name" data-dz-name></p>
+								<strong class="error text-danger" data-dz-errormessage></strong>
+						</div>
+						<div class="col-xs-5">
+							<p class="size" data-dz-size></p>
+							<div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+								<div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+							</div>
+						</div>
+						<div class="col-xs-2">
+							<button data-dz-remove class="btn btn-danger delete">
+								<i class="glyphicon glyphicon-trash"></i>
+								<span>Löschen</span>
+							</button>
+						</div>
+					</div>
+					<hr>
+				</div>
+			</div>
+
+			<footer class="footer">
+				<p>&copy; <a href="http://tobyf.de">Tobias Friebel 2015</a></p>
+			</footer>
+
+		</div> <!-- /container -->
+
+
+		<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+		<script src="dropzone.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+		<script type="text/javascript">
+			// Get the template HTML and remove it from the doumenthe template HTML and remove it from the doument
+			var previewNode = document.querySelector("#template");
+			previewNode.id = "";
+			var previewTemplate = previewNode.parentNode.innerHTML;
+			previewNode.parentNode.removeChild(previewNode);
+
+			var myDropzone = new Dropzone(document.body, {
+				url: "upload.php", // Set the url
+				thumbnailWidth: 80,
+				thumbnailHeight: 80,
+				parallelUploads: 200,
+				previewTemplate: previewTemplate,
+				acceptedFiles: 'image/*',
+				autoProcessQueue: false,
+				clickable: "#fileinput-button",
+				previewsContainer: "#previews"
+			});
+
+			myDropzone.on("queuecomplete", function(progress) {
+				$('#uploadfinished').show();
+				$("#uploadfinished").fadeOut(5000);
+			});
+
+			myDropzone.on("sending", function(file, xhr, formData) {
+				// Will send the filesize along with the file as POST data.
+				formData.append("name", $('#name').val());
+			});
+
+			if ($('#name').val().trim()) {
+				$('#uploadnow').removeAttr('disabled');
+			}
+
+			$('#name').change(function(){
+				var val = $(this).val();
+				if (val.trim()) {
+					$('#uploadnow').removeAttr('disabled');
+				} else {
+					$('#uploadnow').attr('disabled', 'disabled');
+				}
+			});
+
+			$("#uploadnow").click(function() {
+				if ($('#name').val().trim()) {
+					myDropzone.processQueue();
+				}
+			});
+		</script>
+	</body>
+</html>
