@@ -96,17 +96,18 @@
 				url: "upload.php", // Set the url
 				thumbnailWidth: 80,
 				thumbnailHeight: 80,
-				parallelUploads: 200,
+				parallelUploads: 1,
 				previewTemplate: previewTemplate,
 				acceptedFiles: 'image/*',
 				autoProcessQueue: false,
 				clickable: "#fileinput-button",
-				previewsContainer: "#previews"
+				previewsContainer: "#previews",
 			});
 
 			myDropzone.on("complete", function(file) {
-				if (file.upload.progress == 100) {
+				if (file.status == "success") {
 					myDropzone.removeFile(file);
+					myDropzone.processQueue();
 				}
 			});
 
